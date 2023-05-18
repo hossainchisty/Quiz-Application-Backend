@@ -21,6 +21,17 @@ const quizSchema = new mongoose.Schema(
         answers: [{ type: String }],
       },
     ],
+    userAnswers: [
+      {
+        questionId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Question',
+          required: true,
+        },
+        selectedAnswer: Number,
+        isCorrect: Boolean,
+      },
+    ],
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
