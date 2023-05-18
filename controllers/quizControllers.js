@@ -123,7 +123,7 @@ const addQuestionToQuiz = asyncHandler(async (req, res) => {
 const updateQuestionInQuiz = asyncHandler(async (req, res) => {
   try {
     const { quizId, questionId } = req.params;
-    const { question, options, correctAnswer } = req.body;
+    const { question, options, answers } = req.body;
 
     const updatedQuiz = await Quiz.findOneAndUpdate(
       { _id: quizId, 'questions._id': questionId },
@@ -131,7 +131,7 @@ const updateQuestionInQuiz = asyncHandler(async (req, res) => {
         $set: {
           'questions.$.question': question,
           'questions.$.options': options,
-          'questions.$.correctAnswer': correctAnswer,
+          'questions.$.answers': answers,
         },
       },
       { new: true }
