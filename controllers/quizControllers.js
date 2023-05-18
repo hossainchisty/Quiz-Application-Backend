@@ -31,7 +31,13 @@ const createQuiz = asyncHandler(async (req, res) => {
   try {
     const { title, description, categories, questions } = req.body;
 
-    const quizzes = await Quiz.create({ title, description, categories, questions });
+    const quizzes = await Quiz.create({
+      user: req.user.id,
+      title,
+      description,
+      categories,
+      questions,
+    });
 
     res.status(201).json(quizzes);
   } catch (error) {
