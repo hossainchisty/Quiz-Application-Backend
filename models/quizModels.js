@@ -32,7 +32,7 @@ const quizSchema = new mongoose.Schema(
         isCorrect: Boolean,
       },
     ],
-    createdBy: {
+    User: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
