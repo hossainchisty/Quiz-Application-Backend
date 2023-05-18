@@ -1,5 +1,5 @@
 // Database Lib Import
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 // Mongo DB Database Connection
 const connectDB = async () => {
