@@ -1,68 +1,172 @@
-// Create a new quiz
-app.post("/quizzes", async (req, res) => {
-  try {
-    const { question, options, rightAnswer, startDate, endDate } = req.body;
-    const quiz = new Quiz({
-      question,
-      options,
-      rightAnswer,
-      startDate,
-      endDate,
-    });
-    await quiz.save();
-    res.status(201).json(quiz);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Failed to create quiz" });
-  }
-});
+// Basic Lib Imports
+const asyncHandler = require('express-async-handler');
+const Quiz = require('../models/quizModels');
 
-// Get the active quiz
-app.get("/quizzes/active", async (req, res) => {
+/**
+ * @desc  Get all quizzes
+ * @route   /api/v1/quizzes
+ * @method  GET
+ * @access  Public
+ * @return List of quiz
+ */
+const getQuiz = asyncHandler(async (req, res) => {
   try {
-    const now = moment();
-    const quiz = await Quiz.findOne({
-      status: "active",
-      startDate: { $lte: now },
-      endDate: { $gte: now },
-    });
-    if (quiz) {
-      res.json(quiz);
-    } else {
-      res.status(404).json({ error: "No active quiz found" });
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Failed to get active quiz" });
-  }
-});
-
-// Get the result of a quiz by its ID
-app.get("/quizzes/:id/result", async (req, res) => {
-  try {
-    const quiz = await Quiz.findById(req.params.id);
-    if (quiz) {
-      if (quiz.status !== "finished") {
-        res.status(400).json({ error: "Quiz is not yet finished" });
-      } else {
-        res.json({ result: quiz.rightAnswer });
-      }
-    } else {
-      res.status(404).json({ error: "Quiz not found" });
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Failed to get quiz result" });
-  }
-});
-
-// Get all quizzes
-app.get("/quizzes/all", async (req, res) => {
-  try {
-    const quizzes = await Quiz.find({});
+    const quizzes = await Quiz.find().populate('categories');
     res.json(quizzes);
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "Failed to get quizzes" });
+    res.status(500).json({ error: 'Failed to get quizzes' });
   }
 });
+
+/**
+ * @desc     Create a new quiz
+ * @route   /api/v1/quizzes
+ * @method  POST
+ * @access  Private
+ * @returns {object} Newly added quizzes in json format
+ */
+
+const createQuiz = asyncHandler(async (req, res) => {
+  try {
+    const { title, description, categories, questions } = req.body;
+
+    const quizzes = await Quiz.create({ title, description, categories, questions });
+
+    res.status(201).json(quizzes);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create quiz' });
+  }
+});
+
+/**
+ * @desc    Update quiz properties
+ * @route   /api/v1/quizzes/:quizId
+ * @method  PUT
+ * @access  Private
+ * @return  Updated quiz properties
+ */
+
+const updateQuiz = asyncHandler(async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    const { title, description, questions } = req.body;
+    const updatedQuiz = await Quiz.findByIdAndUpdate(
+      quizId,
+      { title, description, questions },
+      { new: true }
+    );
+    res.json(updatedQuiz);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update quiz' });
+  }
+});
+
+/**
+ * @desc    Delete quiz
+ * @route   /api/v1/quizzes/:quizId
+ * @method  DELETE
+ * @access  Private
+ * @return  message: Quiz removed
+ */
+
+const deleteQuiz = asyncHandler(async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    await Quiz.findByIdAndRemove(quizId);
+    res.json({ message: 'Quiz removed' });
+    res.sendStatus(204);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete quiz' });
+  }
+});
+
+/**
+ * @desc     Add a new question to a quiz
+ * @route   /api/v1/quizzes/:quizId/questions
+ * @method  POST
+ * @access  Private
+ * @return  Newly created Question on quiz object
+ */
+
+const addQuestionToQuiz = asyncHandler(async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    const { question, options, answers } = req.body;
+
+    const updatedQuiz = await Quiz.findByIdAndUpdate(
+      quizId,
+      { $push: { questions: { question, options, answers } } },
+      { new: true }
+    );
+
+    res.json(updatedQuiz);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add question to quiz' });
+  }
+});
+
+/**
+ * @desc     Update a question in a quiz
+ * @route   /api/v1/quizzes/:quizId/questions/:questionId
+ * @method  POST
+ * @access  Private
+ * @return  Updated Question on quiz object
+ */
+
+const updateQuestionInQuiz = asyncHandler(async (req, res) => {
+  try {
+    const { quizId, questionId } = req.params;
+    const { question, options, correctAnswer } = req.body;
+
+    const updatedQuiz = await Quiz.findOneAndUpdate(
+      { _id: quizId, 'questions._id': questionId },
+      {
+        $set: {
+          'questions.$.question': question,
+          'questions.$.options': options,
+          'questions.$.correctAnswer': correctAnswer,
+        },
+      },
+      { new: true }
+    );
+
+    res.json(updatedQuiz);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update question in quiz' });
+  }
+});
+
+/**
+ * @desc    Delete a question from a quiz
+ * @route   /api/v1/quizzes/:quizId/questions/:questionId
+ * @method  POST
+ * @access  Private
+ * @return  Delete a question from a quiz
+ */
+
+const deleteQuestionInQuiz = asyncHandler(async (req, res) => {
+  try {
+    const { quizId, questionId } = req.params;
+
+    const updatedQuiz = await Quiz.findByIdAndUpdate(
+      quizId,
+      { $pull: { questions: { _id: questionId } } },
+      { new: true }
+    );
+
+    res.json(updatedQuiz);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete question from quiz' });
+  }
+});
+
+module.exports = {
+  getQuiz,
+  createQuiz,
+  updateQuiz,
+  deleteQuiz,
+  addQuestionToQuiz,
+  updateQuestionInQuiz,
+  deleteQuestionInQuiz,
+};
