@@ -34,7 +34,6 @@ const addCategory = asyncHandler(async (req, res) => {
   }
 
   const taskCategory = await Category.create({
-    // user: req.user.id, TODO: Later we should add user
     name,
   });
   res.status(201).json(taskCategory);

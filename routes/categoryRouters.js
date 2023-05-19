@@ -13,7 +13,7 @@ const {
 const { protect } = require('../middleware/authMiddleware');
 
 // Adding and getting categories
-router.route('/').get(getCategory).post(addCategory);
+router.route('/').get(getCategory).post(protect, addCategory);
 
 // Deleting and updating categories
 router.route('/:id').delete(protect, deleteCategory).put(protect, updateCategory);
