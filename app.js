@@ -13,7 +13,7 @@ connectDB();
 const quizRouters = require('./routes/quizRouters');
 const userRouters = require('./routes/userRouters');
 const categoryRouters = require('./routes/categoryRouters');
-// const tagRouters = require('./routes/tagRouters');
+const leaderboardRouters = require('./routes/leaderboardRouters');
 
 const app = express();
 app.use(bodyParser.json());
@@ -42,7 +42,7 @@ app.use(
 app.use('/api/v1/quizzes', quizRouters);
 app.use('/api/v1/users', userRouters);
 app.use('/api/v1/category', categoryRouters);
-// app.use('/api/v1/tag', tagRouters);
+app.use('/api/v1/leaderboard', leaderboardRouters);
 
 // Undefined Route Implement
 app.use('*', (req, res) => {
