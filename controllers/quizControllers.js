@@ -2,6 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 // Basic Lib Imports
 const asyncHandler = require('express-async-handler');
+const Leaderboard = require('../models/leaderboardModels');
 const Quiz = require('../models/quizModels');
 
 /**
@@ -211,6 +212,13 @@ const submitQuiz = asyncHandler(async (req, res) => {
     // Calculate the score and get progress
     const score = quiz.calculateScore();
     const progress = quiz.getProgress();
+
+    // Update leaderboard entry
+    await Leaderboard.findOneAndUpdate(
+      { quiz: quizId, user: req.user.id },
+      { score },
+      { upsert: true }
+    );
 
     // Save the changes to the quiz
     await quiz.save();
