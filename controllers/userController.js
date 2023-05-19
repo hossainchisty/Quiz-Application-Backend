@@ -60,19 +60,25 @@ const registerUser = asyncHandler(async (req, res) => {
  */
 
 const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-  // Check for user email
-  const user = await User.findOne({ email });
-  if (user && (await bcrypt.compare(password, user.password))) {
-    res.status(200);
-    res.send({
-      // eslint-disable-next-line no-underscore-dangle
-      token: generateToken(user._id),
-      message: 'Logged in successfully',
-    });
-  } else {
-    res.status(400);
-    throw new Error('Invalid credentials');
+  try {
+    const { email, password } = req.body;
+    // Check for user email
+    const user = await User.findOne({ email });
+    if (user && (await bcrypt.compare(password, user.password))) {
+      console.log('Gone through this');
+      res.status(200);
+      res.send({
+        // eslint-disable-next-line no-underscore-dangle
+        token: generateToken(user._id),
+        message: 'Logged in successfully',
+      });
+    } else {
+      res.status(400);
+      throw new Error('Invalid credentials');
+    }
+  } catch (error) {
+    res.status(500);
+    res.send({ error: error.message });
   }
 });
 
@@ -88,8 +94,29 @@ const getMe = asyncHandler(async (req, res) => {
   res.json(req.user);
 });
 
+/**
+ * @desc    Logs out the currently logged-in user by invalidating the JWT token.
+ * @route   /api/v1/users/logout
+ * @method  POST
+ * @access  Private
+ * @requires Logged User
+ * @returns {string} 200 OK: Returns a success message indicating successful logout.
+ */
+
+const logoutUser = asyncHandler(async (req, res) => {
+  // Update the user's token to invalidate it
+  const { user } = req;
+  user.token = '';
+
+  // Save the updated user document
+  await user.save();
+
+  res.status(200).json({ message: 'Logged out successfully' });
+});
+
 module.exports = {
   registerUser,
   loginUser,
   getMe,
+  logoutUser,
 };
