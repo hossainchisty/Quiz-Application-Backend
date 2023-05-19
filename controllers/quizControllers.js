@@ -121,7 +121,7 @@ const addQuestionToQuiz = asyncHandler(async (req, res) => {
 /**
  * @desc     Update a question in a quiz
  * @route   /api/v1/quizzes/:quizId/questions/:questionId
- * @method  POST
+ * @method  PUT
  * @access  Private
  * @param   {String} quizId: The ID of the selected quiz.
  * @param   {String} questionId: The ID of the question to update.
@@ -154,7 +154,7 @@ const updateQuestionInQuiz = asyncHandler(async (req, res) => {
 /**
  * @desc    Delete a question from a quiz
  * @route   /api/v1/quizzes/:quizId/questions/:questionId
- * @method  POST
+ * @method  DELETE
  * @access  Private
  * @param   {String} quizId: The ID of the selected quiz.
  * @param   {String} questionId: The ID of the selected question.

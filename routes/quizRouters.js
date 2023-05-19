@@ -23,7 +23,7 @@ router.route('/').get(protect, getQuiz).post(protect, createQuiz);
 
 router.route('/:quizId').put(protect, updateQuiz).delete(protect, deleteQuiz);
 
-router.route('/:quizId/questions').post(addQuestionToQuiz);
+router.route('/:quizId/questions').post(protect, addQuestionToQuiz);
 
 router.route('/:quizId/submit').post(protect, submitQuiz);
 
