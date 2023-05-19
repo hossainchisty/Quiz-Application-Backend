@@ -11,15 +11,19 @@ const {
   addQuestionToQuiz,
   updateQuestionInQuiz,
   deleteQuestionInQuiz,
+  submitQuiz,
+  getQuizResult,
 } = require('../controllers/quizControllers');
 
-// eslint-disable-next-line no-unused-vars
 const { protect } = require('../middleware/authMiddleware');
 
-router.route('/').get(getQuiz).post(createQuiz);
-router.route('/:quizId').put(updateQuiz).delete(deleteQuiz);
+router.route('/').get(protect, getQuiz).post(protect, createQuiz);
+router.route('/:quizId').put(protect, updateQuiz).delete(protect, deleteQuiz);
 
 router.route('/:quizId/questions').post(addQuestionToQuiz);
+router.route('/:quizId/submit').post(protect, submitQuiz);
+
+router.route('/:quizId/results').get(protect, getQuizResult);
 
 router
   .route('/:quizId/questions/:questionId')
