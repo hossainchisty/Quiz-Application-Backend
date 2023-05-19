@@ -267,6 +267,52 @@ const getQuizResult = asyncHandler(async (req, res) => {
   }
 });
 
+/**
+ * @desc    Get quizzes filtered by a specific category.
+ * @route   /api/v1/quizzes/category/:categoryId
+ * @method  GET
+ * @access  Public
+ * @param   {String} categoryId: The ID of the category.
+ * @return  200 OK: Returns an array of quizzes that belong to the specified category.
+ */
+
+const getQuizbyCategory = asyncHandler(async (req, res) => {
+  const { categoryId } = req.params;
+  try {
+    const quizzes = await Quiz.find({ categories: categoryId }).select(
+      '-questions.correctAnswer -userAnswers'
+    );
+    res.status(200).json(quizzes);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch quizzes' });
+  }
+});
+
+/**
+ * @desc   Search quizzes by title or description using a keyword.
+ * @route   /api/v1/quizzes/search/:keyword
+ * @method  GET
+ * @access  Public
+ * @param   {String} keyword: The keyword to search for in quiz titles or descriptions.
+
+ * @return  200 OK: Returns an array of quizzes that match the search criteria.
+ */
+
+const searchQuiz = asyncHandler(async (req, res) => {
+  const { keyword } = req.params;
+  try {
+    const quizzes = await Quiz.find({
+      $or: [
+        { title: { $regex: keyword, $options: 'i' } },
+        { description: { $regex: keyword, $options: 'i' } },
+      ],
+    }).select('-questions.correctAnswer -userAnswers');
+    res.status(200).json(quizzes);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch quizzes' });
+  }
+});
+
 module.exports = {
   getQuiz,
   createQuiz,
@@ -277,4 +323,6 @@ module.exports = {
   deleteQuestionInQuiz,
   submitQuiz,
   getQuizResult,
+  getQuizbyCategory,
+  searchQuiz,
 };

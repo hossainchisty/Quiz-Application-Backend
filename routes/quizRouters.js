@@ -13,17 +13,25 @@ const {
   deleteQuestionInQuiz,
   submitQuiz,
   getQuizResult,
+  getQuizbyCategory,
+  searchQuiz,
 } = require('../controllers/quizControllers');
 
 const { protect } = require('../middleware/authMiddleware');
 
 router.route('/').get(protect, getQuiz).post(protect, createQuiz);
+
 router.route('/:quizId').put(protect, updateQuiz).delete(protect, deleteQuiz);
 
 router.route('/:quizId/questions').post(addQuestionToQuiz);
+
 router.route('/:quizId/submit').post(protect, submitQuiz);
 
 router.route('/:quizId/results').get(protect, getQuizResult);
+
+router.route('/category/:categoryId').get(getQuizbyCategory);
+
+router.route('/search/:keyword').get(searchQuiz);
 
 router
   .route('/:quizId/questions/:questionId')
