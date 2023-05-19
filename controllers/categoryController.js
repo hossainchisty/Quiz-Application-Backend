@@ -45,6 +45,7 @@ const addCategory = asyncHandler(async (req, res) => {
  * @route   /api/v1/category/:id
  * @method  PUT
  * @access  Private
+ * @param {String} id The id of the category
  * @return Updated category object
  */
 const updateCategory = asyncHandler(async (req, res) => {
@@ -73,6 +74,7 @@ const updateCategory = asyncHandler(async (req, res) => {
  * @route   /api/v1/category/:id
  * @method  DELETE
  * @access  Private
+ * @param {String} id The id of the category
  * @return  Deleted category
  */
 const deleteCategory = asyncHandler(async (req, res, next) => {
