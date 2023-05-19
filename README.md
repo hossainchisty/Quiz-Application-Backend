@@ -4,34 +4,56 @@
 
 List all the API routes and HTTP methods used in the project, along with a brief description of what each endpoint does.
 
-#### Task Creation and Management:
+#### Quiz Creation and Management:
 
-- `/api/v1/tasks` - `GET`: Get all tasks
+##### Public Endpoints:
+
+- `/api/v1/quizzes` - `GET`: Get all quizzes
+
+- `/api/v1/quizzes/category/:categoryId` - `GET`: Get quizzes filtered by a specific category.
+- `/api/v1/quizzes/search/:keyword` - `GET`: Search quizzes by title or description using a keyword.
+
+##### Private Endpoints:
+
+- `/api/v1/quizzes` - `POST`: Create a new quiz
+- `/api/v1/quizzes/:quizId` - `PUT`: Update quiz properties
+- `/api/v1/quizzes/:quizId` - `DELETE`: Delete quiz properties
+
+- `/api/v1/quizzes/:quizId/questions` - `POST`: Add a new question to a quiz
+
+- `/api/v1/quizzes/:quizId/questions/:questionId` - `PUT`: Update a question in a quiz
+- `/api/v1/quizzes/:quizId/questions/:questionId` - `DELETE`: Delete a question from a quiz
+
 - `/api/v1/tasks/item/:taskID` - `GET`: Get a single task
+
 - `/api/v1/tasks` - `POST`: Create a new task
-- `/api/v1/tasks/:taskID` - `PUT`: Update task
-- `/api/v1/tasks/:taskID` - `DELETE`: Delete task
 - `/api/v1/tasks/:taskID` - `GET`: Mark the task as completed
 
-#### Task Sorting and Filtering:
+#### Quiz Taking:
 
-- `/api/v1/tasks/status/:status` - `GET`: Find tasks based on status
+##### Private Endpoints:
 
-- `/api/v1/tasks/priority/:priority` - `GET`: Find tasks based on priority
+- `/api/v1/quizzes/:quizId/results` - `GET`: Get quiz results
 
-- `/api/v1/tasks/filter?sortBy=dueDate&sortDirection=asc&title=homework&dueDate=2023-05-31&priority=high` - `GET`: Get all tasks, optionally sorted and filtered
+- `/api/v1/quizzes/:quizId/submit` - `POST`: Submit the user's answers for a specific quiz.
 
-#### Task Categories and Tags:
+#### Quiz Leaderboard:
 
-- `/api/v1/tag/` - `GET`: List of tags
+##### Public Endpoints:
 
-- `/api/v1/tag/` - `POST`: Create a new tag
+- `/api/v1/leaderboard/` - `GET`: Get Overall Leaderboard
 
-- `/api/v1/tag/:tagID` - `PUT`: Update tags
+##### Private Endpoints:
 
-- `/api/v1/tag/:tagID` - `DELETE`: Delete tags
+- `/api/v1/leaderboard/:quizId` - `GET`: Get the leaderboard for a specific quiz, displaying the highest scoring users.
+
+#### Quiz Categories:
+
+##### Public Endpoints:
 
 - `/api/v1/category/` - `GET`: Get all category
+
+##### Private Endpoints:
 
 - `/api/v1/category/` - `POST`: Create a new category
 
@@ -39,11 +61,17 @@ List all the API routes and HTTP methods used in the project, along with a brief
 
 - `/api/v1/category/:categoryID` - `DELETE`: Delete category
 
-#### User Profile:
+#### User Authentication:
+
+##### Public Endpoints:
 
 - `/api/v1/users/register` - `POST`: Register new user
 
 - `/api/v1/users/login` - `POST`: Authenticate a user
+
+##### Private Endpoints:
+
+- `/api/v1/users/logout` - `POST`: Logs out the currently logged-in user by invalidating the JWT token.
 
 - `/api/v1/users/me` - `GET`: Get user data
 
