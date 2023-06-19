@@ -1,5 +1,5 @@
 ### Quiz Application APIs
-
+A Secure and Scalable Quiz Application with User Authentication, Quiz Management, and Leaderboard.
 #### API Routers and Methods
 
 List all the API routes and HTTP methods used in the project, along with a brief description of what each endpoint does.
